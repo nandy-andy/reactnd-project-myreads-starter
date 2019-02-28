@@ -1,5 +1,7 @@
 import React from 'react';
 
+import BookSelectBox from './BookSelectBox';
+
 function Book(props) {
     const { coverUrl, title, authors } = props.data;
 
@@ -15,13 +17,7 @@ function Book(props) {
                     }}>
                 </div>
                 <div className="book-shelf-changer">
-                    <select>
-                        <option value="move" disabled>Move to...</option>
-                        <option value="currentlyReading">Currently Reading</option>
-                        <option value="wantToRead">Want to Read</option>
-                        <option value="read">Read</option>
-                        <option value="none">None</option>
-                    </select>
+                    <BookSelectBox />
                 </div>
             </div>
             <div className="book-title">{title}</div>
