@@ -1,6 +1,6 @@
 import React from 'react';
 
-// import * as BooksAPI from './BooksAPI';
+import * as BooksAPI from './BooksAPI';
 import SearchInput from './SearchInput';
 import Bookshelf from './Bookshelf';
 
@@ -8,15 +8,18 @@ import './App.css';
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     showSearchPage: false,
     books: [],
   };
+
+  componentDidMount() {
+    BooksAPI.getAll().then(books => {
+        this.setState({books: books});
+        console.log(books);
+    }, () => {
+        console.warn('No books from API');
+    });
+  }
 
   render() {
     const categories = [
@@ -26,14 +29,17 @@ class BooksApp extends React.Component {
       },
       {
           name: 'Currently Reading',
+          code: 'currentlyReading',
           searchable: true
       },
       {
           name: 'Want to read',
+          code: 'wantToRead',
           searchable: true
       },
       {
           name: 'Read',
+          code: 'read',
           searchable: true
       }
     ];
@@ -57,8 +63,8 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                {categories.map(category => (
-                    category.searchable && <Bookshelf key={category.name} title={category.name} />
+                {categories.map((category, key) => (
+                    category.searchable && <Bookshelf key={key} code={category.code} title={category.name} books={this.state.books} />
                 ))}
               </div>
             </div>

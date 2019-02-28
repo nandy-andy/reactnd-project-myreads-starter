@@ -3,7 +3,7 @@ import React from 'react';
 import BookSelectBox from './BookSelectBox';
 
 function Book(props) {
-    const { coverUrl, title, authors } = props.data;
+    const { imageLinks, title, authors } = props.data;
 
     return (
         <div className="book">
@@ -13,7 +13,7 @@ function Book(props) {
                     style={{
                         width: 128,
                         height: 188,
-                        backgroundImage: `url("${coverUrl}")`
+                        backgroundImage: `url("${imageLinks.smallThumbnail}")`
                     }}>
                 </div>
                 <div className="book-shelf-changer">
