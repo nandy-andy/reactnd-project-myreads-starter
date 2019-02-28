@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, Route } from 'react-router-dom';
 
 import * as BooksAPI from './BooksAPI';
 import SearchInput from './SearchInput';
@@ -8,7 +9,6 @@ import './App.css';
 
 class BooksApp extends React.Component {
   state = {
-    showSearchPage: false,
     books: [],
   };
 
@@ -58,40 +58,45 @@ class BooksApp extends React.Component {
 
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
-              <SearchInput />
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid"></ol>
-            </div>
-          </div>
-        ) : (
-          <div className="list-books">
-            <div className="list-books-title">
-              <h1>MyReads</h1>
-            </div>
-            <div className="list-books-content">
-              <div>
-                {categories.map((category, key) => (
-                    category.searchable &&
-                    <Bookshelf
-                        key={key}
-                        code={category.code}
-                        title={category.name}
-                        books={this.state.books}
-                        onChange={this.handleBookChange}
-                    />
-                ))}
+          <Route exact path='/' render={() => (
+              <div className="list-books">
+                <div className="list-books-title">
+                  <h1>MyReads</h1>
+                </div>
+                <div className="list-books-content">
+                  <div>
+                    {categories.map((category, key) => (
+                        category.searchable &&
+                        <Bookshelf
+                            key={key}
+                            code={category.code}
+                            title={category.name}
+                            books={this.state.books}
+                            onChange={this.handleBookChange}
+                        />
+                    ))}
+                  </div>
+                </div>
+                <div className="open-search">
+                    <Link to="/search">
+                        <button className="open-search">Add a book</button>
+                    </Link>
+                </div>
               </div>
-            </div>
-            <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
-            </div>
-          </div>
-        )}
+          )}/>
+          <Route exact path='/search' render={() => (
+              <div className="search-books">
+                  <div className="search-books-bar">
+                      <Link to="/">
+                        <button className="close-search">Close</button>
+                      </Link>
+                      <SearchInput />
+                  </div>
+                  <div className="search-books-results">
+                      <ol className="books-grid"></ol>
+                  </div>
+              </div>
+           )}/>
       </div>
     )
   }
