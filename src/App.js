@@ -35,16 +35,18 @@ class BooksApp extends React.Component {
               });
           } else {
               currentState.books.push(bookToChange);
-              currentState.searchResults = [];
               return currentState;
           }
       });
+      this.resetSearchResults();
   }
 
-  handleBookChange = (bookToChange) => {
+  handleBookChange = (bookToChange, next) => {
     BooksAPI.update(bookToChange, bookToChange.shelf).then((res) => {
         if (!res.error) {
             this.updateBooksState(bookToChange);
+
+            if (typeof(next) === 'function') next();
         } else {
             console.warn(res.error);
         }
@@ -55,6 +57,7 @@ class BooksApp extends React.Component {
 
   handleQuery = (query) => {
     if (query === "") {
+        this.resetSearchResults();
         return;
     }
 
@@ -68,11 +71,25 @@ class BooksApp extends React.Component {
             books = result;
         }
 
+        books.map(book => {
+            this.state.books.forEach((bookOnShelf) => {
+                if (bookOnShelf.id === book.id) {
+                    book.shelf = bookOnShelf.shelf;
+                }
+            });
+
+            return book;
+        });
+
         this.setState({searchResults: books});
     }, () => {
         console.warn('No books from API');
     });
   };
+
+  resetSearchResults() {
+      this.setState({searchResults: []});
+  }
 
   render() {
     const categories = [
@@ -130,9 +147,10 @@ class BooksApp extends React.Component {
           <Route exact path='/search' render={({ history }) => (
               <Search
                   onQuery={this.handleQuery}
-                  onChange={(bookToChange, newShelf) => {
-                      this.handleBookChange(bookToChange, newShelf);
-                      history.push('/');
+                  onChange={(bookToChange) => {
+                      this.handleBookChange(bookToChange, () => {
+                          history.push('/');
+                      });
                   }}
                   books={this.state.searchResults.filter(book => {
                       return book.title && book.authors && book.imageLinks && book.imageLinks.smallThumbnail;
