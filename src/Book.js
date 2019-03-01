@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import BookSelectBox from './BookSelectBox';
 
@@ -35,5 +36,10 @@ class Book extends Component {
         );
     }
 }
+
+Book.propTypes = {
+    data: PropTypes.object.isRequired,
+    onChange: PropTypes.func.isRequired
+};
 
 export default Book;

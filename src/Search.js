@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import SearchInput from './SearchInput';
 import ListBooks from './ListBooks';
@@ -30,5 +31,11 @@ class Search extends Component {
         );
     }
 }
+
+Search.propTypes = {
+    books: PropTypes.array.isRequired,
+    onQuery: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired
+};
 
 export default Search;

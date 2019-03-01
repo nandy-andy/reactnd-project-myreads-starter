@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class BookSelectBox extends Component {
   state = {
@@ -22,5 +23,10 @@ class BookSelectBox extends Component {
     );
   }
 }
+
+BookSelectBox.propTypes = {
+    category: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired
+};
 
 export default BookSelectBox;
