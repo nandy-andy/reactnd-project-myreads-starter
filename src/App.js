@@ -47,7 +47,16 @@ class BooksApp extends React.Component {
         return;
     }
 
-    BooksAPI.search(query).then(books => {
+    BooksAPI.search(query).then(result => {
+        let books;
+
+        if (result.error) {
+            console.warn(result.error);
+            books = result.items;
+        } else {
+            books = result;
+        }
+
         this.setState({searchResults: books});
     }, () => {
         console.warn('No books from API');
