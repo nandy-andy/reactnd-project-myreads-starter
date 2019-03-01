@@ -2,20 +2,20 @@ import React from 'react';
 import { Link, Route } from 'react-router-dom';
 
 import * as BooksAPI from './BooksAPI';
-import SearchInput from './SearchInput';
 import Bookshelf from './Bookshelf';
 
 import './App.css';
+import Search from "./Search";
 
 class BooksApp extends React.Component {
   state = {
     books: [],
+    searchResults: []
   };
 
   componentDidMount() {
     BooksAPI.getAll().then(books => {
         this.setState({books: books});
-        console.log(books);
     }, () => {
         console.warn('No books from API');
     });
@@ -33,26 +33,39 @@ class BooksApp extends React.Component {
     });
   };
 
+  handleQuery = (query) => {
+    if (query === "") {
+        return;
+    }
+
+    BooksAPI.search(query).then(books => {
+        this.setState({searchResults: books});
+    }, () => {
+        console.warn('No books from API');
+    });
+  };
+
   render() {
     const categories = [
       {
           name: 'None',
-          searchable: false
+          code: 'none',
+          showOnMainPage: false
       },
       {
           name: 'Currently Reading',
           code: 'currentlyReading',
-          searchable: true
+          showOnMainPage: true
       },
       {
           name: 'Want to read',
           code: 'wantToRead',
-          searchable: true
+          showOnMainPage: true
       },
       {
           name: 'Read',
           code: 'read',
-          searchable: true
+          showOnMainPage: true
       }
     ];
 
@@ -66,12 +79,13 @@ class BooksApp extends React.Component {
                 <div className="list-books-content">
                   <div>
                     {categories.map((category, key) => (
-                        category.searchable &&
+                        category.showOnMainPage &&
                         <Bookshelf
                             key={key}
-                            code={category.code}
                             title={category.name}
-                            books={this.state.books}
+                            books={this.state.books.filter(book => {
+                                return book.shelf === category.code;
+                            })}
                             onChange={this.handleBookChange}
                         />
                     ))}
@@ -85,17 +99,16 @@ class BooksApp extends React.Component {
               </div>
           )}/>
           <Route exact path='/search' render={() => (
-              <div className="search-books">
-                  <div className="search-books-bar">
-                      <Link to="/">
-                        <button className="close-search">Close</button>
-                      </Link>
-                      <SearchInput />
-                  </div>
-                  <div className="search-books-results">
-                      <ol className="books-grid"></ol>
-                  </div>
-              </div>
+              <Search
+                  onQuery={this.handleQuery}
+                  onChange={this.handleBookChange}
+                  books={this.state.searchResults.filter(book => {
+                      return book.title && book.authors && book.imageLinks && book.imageLinks.smallThumbnail;
+                  }).map(book => {
+                      book.shelf = 'none';
+                      return book;
+                  })}
+              />
            )}/>
       </div>
     )
