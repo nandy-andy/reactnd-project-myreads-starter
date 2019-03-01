@@ -36,6 +36,7 @@ class BooksApp extends React.Component {
         } else {
             bookToChange.shelf = newShelf;
             currentState.books.push(bookToChange);
+            currentState.searchResults = [];
             return currentState;
         }
     });
@@ -106,10 +107,13 @@ class BooksApp extends React.Component {
                 </div>
               </div>
           )}/>
-          <Route exact path='/search' render={() => (
+          <Route exact path='/search' render={({ history }) => (
               <Search
                   onQuery={this.handleQuery}
-                  onChange={this.handleBookChange}
+                  onChange={(bookToChange, newShelf) => {
+                      this.handleBookChange(bookToChange, newShelf);
+                      history.push('/');
+                  }}
                   books={this.state.searchResults.filter(book => {
                       return book.title && book.authors && book.imageLinks && book.imageLinks.smallThumbnail;
                   })}
