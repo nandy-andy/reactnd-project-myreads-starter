@@ -21,23 +21,35 @@ class BooksApp extends React.Component {
     });
   }
 
+  updateBooksState(bookToChange) {
+      this.setState((currentState) => {
+          const alreadyExist = currentState.books.filter((book) => book.id === bookToChange.id);
+
+          if (alreadyExist.length > 0) {
+              return currentState.books.map((book) => {
+                  if (book.id === bookToChange.id) {
+                      book = bookToChange;
+                  }
+
+                  return book;
+              });
+          } else {
+              currentState.books.push(bookToChange);
+              currentState.searchResults = [];
+              return currentState;
+          }
+      });
+  }
+
   handleBookChange = (bookToChange) => {
-    this.setState((currentState) => {
-        const alreadyExist = currentState.books.filter((book) => book.id === bookToChange.id);
-
-        if (alreadyExist.length > 0) {
-            return currentState.books.map((book) => {
-                if (book.id === bookToChange.id) {
-                    book = bookToChange;
-                }
-
-                return book;
-            });
+    BooksAPI.update(bookToChange, bookToChange.shelf).then((res) => {
+        if (!res.error) {
+            this.updateBooksState(bookToChange);
         } else {
-            currentState.books.push(bookToChange);
-            currentState.searchResults = [];
-            return currentState;
+            console.warn(res.error);
         }
+    }, (res) => {
+      console.warn(res);
     });
   };
 
