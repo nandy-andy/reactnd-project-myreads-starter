@@ -3,12 +3,13 @@ import React, { Component } from 'react';
 import BookSelectBox from './BookSelectBox';
 
 class Book extends Component {
-    handleChange = (id, newShelf) => {
-        this.props.onChange(id, newShelf);
+    handleChange = (book, newShelf) => {
+        this.props.onChange(book, newShelf);
     };
 
     render() {
-        const {id, imageLinks, title, authors, shelf} = this.props.data;
+        const {imageLinks, title, authors} = this.props.data;
+        let shelf = this.props.data.shelf || 'none';
 
         return (
             <div className="book">
@@ -23,7 +24,7 @@ class Book extends Component {
                     </div>
                     <div className="book-shelf-changer">
                         <BookSelectBox category={shelf} onChange={(newShelf) => {
-                            this.handleChange(id, newShelf);
+                            this.handleChange(this.props.data, newShelf);
                         }} />
                     </div>
                 </div>

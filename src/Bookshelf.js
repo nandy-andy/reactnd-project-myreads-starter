@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import ListBooks from './ListBooks';
 
 class Bookshelf extends Component {
-    handleChange = (id, newShelf) => {
-        this.props.onChange(id, newShelf);
+    handleChange = (book, newShelf) => {
+        this.props.onChange(book, newShelf);
     };
 
     render() {

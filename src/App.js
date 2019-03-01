@@ -21,15 +21,23 @@ class BooksApp extends React.Component {
     });
   }
 
-  handleBookChange = (id, newShelf) => {
+  handleBookChange = (bookToChange, newShelf) => {
     this.setState((currentState) => {
-        return currentState.books.map((book) => {
-            if (book.id === id) {
-                book.shelf = newShelf;
-            }
+        const alreadyExist = currentState.books.filter((book) => book.id === bookToChange.id);
 
-            return book;
-        });
+        if (alreadyExist.length > 0) {
+            return currentState.books.map((book) => {
+                if (book.id === bookToChange.id) {
+                    book.shelf = newShelf;
+                }
+
+                return book;
+            });
+        } else {
+            bookToChange.shelf = newShelf;
+            currentState.books.push(bookToChange);
+            return currentState;
+        }
     });
   };
 
@@ -104,9 +112,6 @@ class BooksApp extends React.Component {
                   onChange={this.handleBookChange}
                   books={this.state.searchResults.filter(book => {
                       return book.title && book.authors && book.imageLinks && book.imageLinks.smallThumbnail;
-                  }).map(book => {
-                      book.shelf = 'none';
-                      return book;
                   })}
               />
            )}/>
