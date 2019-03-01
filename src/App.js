@@ -21,20 +21,19 @@ class BooksApp extends React.Component {
     });
   }
 
-  handleBookChange = (bookToChange, newShelf) => {
+  handleBookChange = (bookToChange) => {
     this.setState((currentState) => {
         const alreadyExist = currentState.books.filter((book) => book.id === bookToChange.id);
 
         if (alreadyExist.length > 0) {
             return currentState.books.map((book) => {
                 if (book.id === bookToChange.id) {
-                    book.shelf = newShelf;
+                    book = bookToChange;
                 }
 
                 return book;
             });
         } else {
-            bookToChange.shelf = newShelf;
             currentState.books.push(bookToChange);
             currentState.searchResults = [];
             return currentState;

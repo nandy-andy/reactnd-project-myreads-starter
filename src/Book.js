@@ -4,7 +4,8 @@ import BookSelectBox from './BookSelectBox';
 
 class Book extends Component {
     handleChange = (book, newShelf) => {
-        this.props.onChange(book, newShelf);
+        book.shelf = newShelf;
+        this.props.onChange(book);
     };
 
     render() {
