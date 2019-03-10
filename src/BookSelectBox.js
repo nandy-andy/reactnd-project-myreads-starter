@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 class BookSelectBox extends Component {
@@ -7,8 +7,8 @@ class BookSelectBox extends Component {
   };
 
   handleChange = (event) => {
-      const newShelf = event.target.value;
-      this.props.onChange(newShelf);
+    const newShelf = event.target.value;
+    this.props.onChange(newShelf);
   };
 
   render() {
@@ -25,8 +25,8 @@ class BookSelectBox extends Component {
 }
 
 BookSelectBox.propTypes = {
-    category: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+  category: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
 export default BookSelectBox;
