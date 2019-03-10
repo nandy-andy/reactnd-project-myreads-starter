@@ -9,14 +9,15 @@ class Bookshelf extends Component {
     };
 
     render() {
-        const { books, title } = this.props;
+        let title = this.props.title.replace( /([A-Z])/g, " $1" );
+        title = title.charAt(0).toUpperCase() + title.slice(1);
 
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{title}</h2>
                 <div className="bookshelf-books">
                     <ListBooks
-                        books={books}
+                        books={this.props.books}
                         onChange={this.handleChange}
                     />
                 </div>

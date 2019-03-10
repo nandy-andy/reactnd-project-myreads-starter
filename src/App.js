@@ -15,7 +15,19 @@ class BooksApp extends React.Component {
 
   componentDidMount() {
     BooksAPI.getAll().then(books => {
-        this.setState({books: books});
+        let booksByShelf = {};
+
+        books.forEach((book) => {
+            if (book.shelf) {
+                if (!booksByShelf[book.shelf]) {
+                    booksByShelf[book.shelf] = [];
+                }
+
+                booksByShelf[book.shelf].push(book);
+            }
+        });
+
+        this.setState({books: booksByShelf});
     }, () => {
         console.warn('No books from API');
     });
@@ -23,19 +35,12 @@ class BooksApp extends React.Component {
 
   updateBooksState(bookToChange) {
       this.setState((currentState) => {
-          const alreadyExist = currentState.books.filter((book) => book.id === bookToChange.id);
+          Object.keys(currentState.books).forEach((shelf) => {
+              currentState.books[shelf] = currentState.books[shelf].filter(book => book.id !== bookToChange.id);
+          });
 
-          if (alreadyExist.length > 0) {
-              currentState.books = currentState.books.map((book) => {
-                  if (book.id === bookToChange.id) {
-                      return bookToChange;
-                  }
-
-                  return book;
-              });
-
-          } else {
-              currentState.books.push(bookToChange);
+          if (currentState.books[bookToChange.shelf]) {
+              currentState.books[bookToChange.shelf].push(bookToChange);
           }
 
           return currentState;
@@ -75,10 +80,12 @@ class BooksApp extends React.Component {
         }
 
         books.map(book => {
-            this.state.books.forEach((bookOnShelf) => {
-                if (bookOnShelf.id === book.id) {
-                    book.shelf = bookOnShelf.shelf;
-                }
+            Object.keys(this.state.books).forEach((shelf) => {
+                this.state.books[shelf].forEach((bookOnShelf) => {
+                    if (bookOnShelf.id === book.id) {
+                        book.shelf = bookOnShelf.shelf;
+                    }
+                });
             });
 
             return book;
@@ -95,29 +102,6 @@ class BooksApp extends React.Component {
   }
 
   render() {
-    const categories = [
-      {
-          name: 'None',
-          code: 'none',
-          showOnMainPage: false
-      },
-      {
-          name: 'Currently Reading',
-          code: 'currentlyReading',
-          showOnMainPage: true
-      },
-      {
-          name: 'Want to read',
-          code: 'wantToRead',
-          showOnMainPage: true
-      },
-      {
-          name: 'Read',
-          code: 'read',
-          showOnMainPage: true
-      }
-    ];
-
     return (
       <div className="app">
           <Route exact path='/' render={() => (
@@ -127,17 +111,14 @@ class BooksApp extends React.Component {
                 </div>
                 <div className="list-books-content">
                   <div>
-                    {categories.map((category, key) => (
-                        category.showOnMainPage &&
-                        <Bookshelf
-                            key={key}
-                            title={category.name}
-                            books={this.state.books.filter(book => {
-                                return book.shelf === category.code;
-                            })}
-                            onChange={this.handleBookChange}
-                        />
-                    ))}
+                      {Object.keys(this.state.books).map((shelf) => {
+                          return <Bookshelf
+                              key={shelf}
+                              title={shelf}
+                              books={this.state.books[shelf]}
+                              onChange={this.handleBookChange}
+                          />
+                      })}
                   </div>
                 </div>
                 <div className="open-search">
